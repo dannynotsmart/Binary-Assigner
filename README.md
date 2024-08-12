@@ -3,8 +3,7 @@
 Binary Assigner is a tool designed to digitalize the assignment of binary values. Allows you to assign two different values to a numbered list. Meant to be used alongside a clicker and the website for visualization. Allows you to export the results of the binary sorting as a json file.
 
 Sample website usage can be seen at 
-https://binary-assigner.vercel.app/
-https://binary-assigner.vercel.app/view
+https://binary-assigner.vercel.app/ and https://binary-assigner.vercel.app/view
 
 # Installation
 Prerequisites
