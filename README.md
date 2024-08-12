@@ -12,8 +12,8 @@ Installation can be done by cloning the github repoistory with git clone https:/
 
 Some example use cases for the binary assigner could be assigning binary values based on numerical thresholds or categorizing data into binary classes using custom logic. Developed originally to assist in a laboratory environment with tracking experiments.
 
-##Contributing
+## Contributing
 We welcome contributions to the Binary Assigner project! If you'd like to contribute, please fork the repository and use a feature branch. Pull requests are warmly welcome.
 
-##License
+## License
 This project is licensed under the MIT License - see the LICENSE file for details.
