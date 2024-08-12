@@ -72,7 +72,11 @@ export default function Home() {
   };
 
   const handleExport = () => {
-    const values = circleStates.map((state) => (state === "green" ? 1 : 0));
+    const values = circleStates.map((state) => {
+      if (state === "green") return 1;
+      if (state === "blue") return 2;
+      return 0;
+    });
     const data = {
       rows,
       cols,
@@ -105,7 +109,11 @@ export default function Home() {
           setRows(data.rows || 1);
           setCols(data.cols || 1);
           setNotes(data.notes || "");
-          setCircleStates(data.values.map((v: number) => (v === 1 ? "green" : "red")));
+          setCircleStates(data.values.map((v: number) => {
+            if (v === 1) return "green";
+            if (v === 2) return "blue";
+            return "red";
+          }));
         }
       } catch (err) {
         alert("Failed to parse JSON file.");

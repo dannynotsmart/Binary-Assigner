@@ -31,6 +31,10 @@ export default function View() {
     reader.readAsText(file);
   };
 
+  const hiddenCells = data?.values
+    .map((value, index) => (value === 2 && !showBlue ? index + 1 : null))
+    .filter((index) => index !== null) as number[];
+
   return (
     <>
       <Head>
@@ -38,7 +42,9 @@ export default function View() {
       </Head>
       <main className={`${inter.className} flex flex-col min-h-screen bg-gray-100`}>
         <header className="bg-white shadow-md py-4 px-8 text-center">
-          <Link href="https://github.com/dannynotsmart/Binary-Assigner"><h1 className="text-2xl font-bold">View Binary Assigner</h1></Link>
+          <Link href="https://github.com/dannynotsmart/Binary-Assigner">
+            <h1 className="text-2xl font-bold">View Binary Assigner</h1>
+          </Link>
         </header>
         <div className="flex flex-col items-center py-4 space-y-4">
           <Link href="/">Want to generate these files? Click me!</Link>
@@ -86,6 +92,16 @@ export default function View() {
                   <p><strong>Columns:</strong> {data.cols}</p>
                   <p><strong>Notes:</strong> {data.notes}</p>
                 </div>
+                {!showBlue && hiddenCells.length > 0 && (
+                  <div className="mt-4">
+                    <h2 className="text-lg font-semibold">Hidden Blue Circles:</h2>
+                    <ul className="list-disc list-inside mt-2">
+                      {hiddenCells.map((index) => (
+                        <li key={index}>Circle {index}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
               </div>
             </>
           )}
