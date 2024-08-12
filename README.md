@@ -9,14 +9,12 @@ https://binary-assigner.vercel.app/view
 # Installation
 Prerequisites
 Node.js >= 14.x
-Installation can be done by cloning the github repoistory with  git clone https://github.com/dannynotsmart/Binary-Assigner
+Installation can be done by cloning the github repoistory with git clone https://github.com/dannynotsmart/Binary-Assigner
 
-
-Here are some example use cases for the binary assigner could be assigning binary values based on numerical thresholds or categorizing data into binary classes using custom logic. Developed originally to assist in a laboratory environment with tracking experiments.
+Some example use cases for the binary assigner could be assigning binary values based on numerical thresholds or categorizing data into binary classes using custom logic. Developed originally to assist in a laboratory environment with tracking experiments.
 
 Contributing
 We welcome contributions to the Binary Assigner project! If you'd like to contribute, please fork the repository and use a feature branch. Pull requests are warmly welcome.
 
-Submit a pull request.
 License
 This project is licensed under the MIT License - see the LICENSE file for details.
