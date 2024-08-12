@@ -9,12 +9,17 @@ export default function Home() {
   const [cols, setCols] = useState(8);
   const [notes, setNotes] = useState("");
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const [circleStates, setCircleStates] = useState<boolean[]>(Array(rows * cols).fill(true));
+  const [circleStates, setCircleStates] = useState<boolean[]>(Array(12 * 8).fill(true));
 
   useEffect(() => {
     const totalCircles = rows * cols;
-    setCircleStates(Array(totalCircles).fill(true));
-    setSelectedIndex(0);
+    setCircleStates((prev) => {
+      if (prev.length !== totalCircles) {
+        return Array(totalCircles).fill(true);
+      }
+      return prev;
+    });
+    setSelectedIndex((prev) => Math.min(prev, totalCircles - 1));
   }, [rows, cols]);
 
   const handleKeyDown = (e: KeyboardEvent) => {
@@ -67,8 +72,8 @@ export default function Home() {
       try {
         const data = JSON.parse(e.target.result as string);
         if (data.values && Array.isArray(data.values)) {
-          setRows(data.rows);
-          setCols(data.cols);
+          setRows(data.rows || 1);
+          setCols(data.cols || 1);
           setNotes(data.notes || "");
           setCircleStates(data.values.map((v: number) => v === 1));
         }
@@ -151,7 +156,13 @@ export default function Home() {
         </div>
         <hr className="border-t border-gray-300" />
         <div className="flex-grow flex justify-center items-center py-4">
-          <div className={`grid grid-cols-${cols} gap-2 sm:gap-3 md:gap-4 lg:gap-5`}>
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))`,
+              gap: "0.5rem",
+            }}
+          >
             {Array.from({ length: rows * cols }).map((_, index) => (
               <div
                 key={index}
