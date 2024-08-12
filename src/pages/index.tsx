@@ -1,15 +1,16 @@
 import { useEffect, useState } from "react";
 import { Inter } from "next/font/google";
+import Link from 'next/link';
 import Head from "next/head";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export default function Home() {
-  const [rows, setRows] = useState(12);
-  const [cols, setCols] = useState(8);
+  const [rows, setRows] = useState(8);
+  const [cols, setCols] = useState(12);
   const [notes, setNotes] = useState("");
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const [circleStates, setCircleStates] = useState<boolean[]>(Array(12 * 8).fill(true));
+  const [circleStates, setCircleStates] = useState<boolean[]>(Array(8 * 12).fill(true));
 
   useEffect(() => {
     const totalCircles = rows * cols;
@@ -34,6 +35,7 @@ export default function Home() {
         newStates[selectedIndex] = !newStates[selectedIndex];
         return newStates;
       });
+      setSelectedIndex((prev) => Math.min(prev + 1, totalCircles - 1)); // Move to the next cell after toggling
     }
   };
 
@@ -108,9 +110,10 @@ export default function Home() {
       </Head>
       <main className={`${inter.className} flex flex-col min-h-screen bg-gray-100`}>
         <header className="bg-white shadow-md py-4 px-8 text-center">
-          <h1 className="text-2xl font-bold">Binary Assigner</h1>
+          <Link href="https://github.com/dannynotsmart/Binary-Assigner"><h1 className="text-2xl font-bold">Binary Assigner</h1></Link>
         </header>
         <div className="flex flex-col items-center py-4 space-y-4">
+          <Link href="/view">Want to view generated files? Click me!</Link>
           <div className="flex space-x-4">
             <label className="flex flex-col">
               Rows

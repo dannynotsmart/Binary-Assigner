@@ -1,5 +1,6 @@
 import { useState } from "react";
 import Head from "next/head";
+import Link from "next/link";
 
 export default function View() {
   const [circleStates, setCircleStates] = useState<boolean[]>([]);
@@ -36,9 +37,10 @@ export default function View() {
       </Head>
       <main className="flex flex-col min-h-screen bg-gray-100">
         <header className="bg-white shadow-md py-4 px-8 text-center">
-          <h1 className="text-2xl font-bold">View Binary Assigner</h1>
+        <Link href="https://github.com/dannynotsmart/Binary-Assigner"><h1 className="text-2xl font-bold">View Binary Assigner</h1></Link>
         </header>
         <div className="flex flex-col items-center py-4 space-y-4">
+          <Link href="/">Want to generate these files? Click me!</Link>
           <input
             type="file"
             accept=".json"
