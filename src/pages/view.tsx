@@ -12,6 +12,7 @@ export default function View() {
     notes: string;
     values: number[];
   } | null>(null);
+  const [showBlue, setShowBlue] = useState(true);
 
   const handleImport = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -49,31 +50,42 @@ export default function View() {
           />
           {data && (
             <>
-              <div className="flex-grow flex justify-center items-center py-4">
-                <div
-                  style={{
-                    display: "grid",
-                    gridTemplateColumns: `repeat(${data.cols}, minmax(0, 1fr))`,
-                    gap: "0.5rem",
-                  }}
-                >
-                  {data.values.map((value, index) => (
-                    <div
-                      key={index}
-                      className={`w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 lg:w-10 lg:h-10 xl:w-12 xl:h-12 rounded-full flex justify-center items-center
-                        ${value ? "bg-green-500" : "bg-red-500"}`}
-                    >
-                      <span className="text-white text-xs sm:text-sm md:text-base lg:text-sm xl:text-base">
-                        {index + 1}
-                      </span>
-                    </div>
-                  ))}
+              <div className="flex flex-col items-center py-4 space-y-4">
+                <label className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    checked={showBlue}
+                    onChange={(e) => setShowBlue(e.target.checked)}
+                    className="form-checkbox"
+                  />
+                  <span>Show blue circles</span>
+                </label>
+                <div className="flex-grow flex justify-center items-center py-4">
+                  <div
+                    style={{
+                      display: "grid",
+                      gridTemplateColumns: `repeat(${data.cols}, minmax(0, 1fr))`,
+                      gap: "0.5rem",
+                    }}
+                  >
+                    {data.values.map((value, index) => (
+                      <div
+                        key={index}
+                        className={`w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 lg:w-10 lg:h-10 xl:w-12 xl:h-12 rounded-full flex justify-center items-center
+                          ${value === 1 ? "bg-green-500" : value === 2 ? (showBlue ? "bg-blue-500" : "hidden") : "bg-red-500"}`}
+                      >
+                        <span className="text-white text-xs sm:text-sm md:text-base lg:text-sm xl:text-base">
+                          {index + 1}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </div>
-              <div className="text-center mt-4">
-                <p><strong>Rows:</strong> {data.rows}</p>
-                <p><strong>Columns:</strong> {data.cols}</p>
-                <p><strong>Notes:</strong> {data.notes}</p>
+                <div className="text-center mt-4">
+                  <p><strong>Rows:</strong> {data.rows}</p>
+                  <p><strong>Columns:</strong> {data.cols}</p>
+                  <p><strong>Notes:</strong> {data.notes}</p>
+                </div>
               </div>
             </>
           )}

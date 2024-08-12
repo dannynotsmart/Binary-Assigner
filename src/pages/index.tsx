@@ -10,41 +10,69 @@ export default function Home() {
   const [cols, setCols] = useState(12);
   const [notes, setNotes] = useState("");
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const [circleStates, setCircleStates] = useState<boolean[]>(Array(8 * 12).fill(true));
+  const [circleStates, setCircleStates] = useState<string[]>(Array(8 * 12).fill("red"));
+  const [bPressTimeout, setBPressTimeout] = useState<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     const totalCircles = rows * cols;
     setCircleStates((prev) => {
       if (prev.length !== totalCircles) {
-        return Array(totalCircles).fill(true);
+        return Array(totalCircles).fill("red");
       }
       return prev;
     });
     setSelectedIndex((prev) => Math.min(prev, totalCircles - 1));
   }, [rows, cols]);
 
-  const handleKeyDown = (e: KeyboardEvent) => {
-    const totalCircles = rows * cols;
-    if (e.key === "PageDown" || e.key === "ArrowRight") {
-      setSelectedIndex((prev) => Math.min(prev + 1, totalCircles - 1));
-    } else if (e.key === "PageUp" || e.key === "ArrowLeft") {
-      setSelectedIndex((prev) => Math.max(prev - 1, 0));
-    } else if (e.key === "b" || e.key === "B") {
-      setCircleStates((prev) => {
-        const newStates = [...prev];
-        newStates[selectedIndex] = !newStates[selectedIndex];
-        return newStates;
-      });
-      setSelectedIndex((prev) => Math.min(prev + 1, totalCircles - 1)); // Move to the next cell after toggling
-    }
-  };
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const totalCircles = rows * cols;
+
+      if (e.key === "PageDown" || e.key === "ArrowRight") {
+        setSelectedIndex((prev) => Math.min(prev + 1, totalCircles - 1));
+      } else if (e.key === "PageUp" || e.key === "ArrowLeft") {
+        setSelectedIndex((prev) => Math.max(prev - 1, 0));
+      } else if (e.key === "b" || e.key === "B") {
+        if (bPressTimeout) {
+          clearTimeout(bPressTimeout);
+          setBPressTimeout(null);
+          setCircleStates((prev) => {
+            const newStates = [...prev];
+            newStates[selectedIndex] = "blue";
+            return newStates;
+          });
+          setSelectedIndex((prev) => Math.min(prev + 1, totalCircles - 1));
+        } else {
+          setBPressTimeout(
+            setTimeout(() => {
+              setCircleStates((prev) => {
+                const newStates = [...prev];
+                newStates[selectedIndex] = newStates[selectedIndex] === "red" ? "green" : "red";
+                return newStates;
+              });
+              setSelectedIndex((prev) => Math.min(prev + 1, totalCircles - 1));
+              setBPressTimeout(null);
+            }, 300)
+          );
+        }
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      if (bPressTimeout) {
+        clearTimeout(bPressTimeout);
+      }
+    };
+  }, [selectedIndex, rows, cols, bPressTimeout]);
 
   const handleCircleClick = (index: number) => {
     setSelectedIndex(index);
   };
 
   const handleExport = () => {
-    const values = circleStates.map((state) => (state ? 1 : 0));
+    const values = circleStates.map((state) => (state === "green" ? 1 : 0));
     const data = {
       rows,
       cols,
@@ -77,7 +105,7 @@ export default function Home() {
           setRows(data.rows || 1);
           setCols(data.cols || 1);
           setNotes(data.notes || "");
-          setCircleStates(data.values.map((v: number) => v === 1));
+          setCircleStates(data.values.map((v: number) => (v === 1 ? "green" : "red")));
         }
       } catch (err) {
         alert("Failed to parse JSON file.");
@@ -85,13 +113,6 @@ export default function Home() {
     };
     reader.readAsText(file);
   };
-
-  useEffect(() => {
-    window.addEventListener("keydown", handleKeyDown);
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [selectedIndex, rows, cols]);
 
   const handleRowsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = Math.max(1, parseInt(e.target.value) || 1);
@@ -171,7 +192,7 @@ export default function Home() {
                 key={index}
                 onClick={() => handleCircleClick(index)}
                 className={`w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 lg:w-10 lg:h-10 xl:w-12 xl:h-12 rounded-full flex justify-center items-center cursor-pointer
-                  ${circleStates[index] ? "bg-green-500" : "bg-red-500"}
+                  ${circleStates[index] === "green" ? "bg-green-500" : circleStates[index] === "blue" ? "bg-blue-500" : "bg-red-500"}
                   ${selectedIndex === index ? "border-4 border-blue-500" : ""}`}
               >
                 <span className="text-white text-xs sm:text-sm md:text-base lg:text-sm xl:text-base">
