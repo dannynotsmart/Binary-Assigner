@@ -27,43 +27,30 @@ export default function Home() {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       const totalCircles = rows * cols;
-
       if (e.key === "PageDown" || e.key === "ArrowRight") {
         setSelectedIndex((prev) => Math.min(prev + 1, totalCircles - 1));
-      } else if (e.key === "PageUp" || e.key === "ArrowLeft") {
+      } else if (e.key === "ArrowLeft") {
         setSelectedIndex((prev) => Math.max(prev - 1, 0));
       } else if (e.key === "b" || e.key === "B") {
-        if (bPressTimeout) {
-          clearTimeout(bPressTimeout);
-          setBPressTimeout(null);
-          setCircleStates((prev) => {
-            const newStates = [...prev];
-            newStates[selectedIndex] = "blue";
-            return newStates;
-          });
-          setSelectedIndex((prev) => Math.min(prev + 1, totalCircles - 1));
-        } else {
-          setBPressTimeout(
-            setTimeout(() => {
-              setCircleStates((prev) => {
-                const newStates = [...prev];
-                newStates[selectedIndex] = newStates[selectedIndex] === "red" ? "green" : "red";
-                return newStates;
-              });
-              setSelectedIndex((prev) => Math.min(prev + 1, totalCircles - 1));
-              setBPressTimeout(null);
-            }, 300)
-          );
-        }
+        setCircleStates((prev) => {
+          const newStates = [...prev];
+          newStates[selectedIndex] = "blue";
+          return newStates;
+        });
+        setSelectedIndex((prev) => Math.min(prev + 1, totalCircles - 1)); // Move to the next cell after toggling
+      } else if (e.key === "PageUp" || e.key === "n" || e.key === "N") {
+        setCircleStates((prev) => {
+          const newStates = [...prev];
+          newStates[selectedIndex] = newStates[selectedIndex] === "red" ? "green" : "red";
+          return newStates;
+        });
+        setSelectedIndex((prev) => Math.min(prev + 1, totalCircles - 1));
       }
     };
 
     window.addEventListener("keydown", handleKeyDown);
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
-      if (bPressTimeout) {
-        clearTimeout(bPressTimeout);
-      }
     };
   }, [selectedIndex, rows, cols, bPressTimeout]);
 
