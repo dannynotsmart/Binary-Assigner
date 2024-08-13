@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Inter } from "next/font/google";
-import Link from 'next/link';
 import Head from "next/head";
+import Link from "next/link";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -132,6 +132,16 @@ export default function Home() {
     setCols(value);
   };
 
+  const getColumnLabels = () => {
+    return Array.from({ length: cols }, (_, i) => i + 1);
+  };
+
+  const getRowLabels = () => {
+    return Array.from({ length: rows }, (_, i) =>
+      String.fromCharCode("A".charCodeAt(0) + i)
+    );
+  };
+
   return (
     <>
       <Head>
@@ -139,7 +149,7 @@ export default function Home() {
       </Head>
       <main className={`${inter.className} flex flex-col min-h-screen bg-gray-100`}>
         <header className="bg-white shadow-md py-4 px-8 text-center">
-          <Link href="https://github.com/dannynotsmart/Binary-Assigner"><h1 className="text-2xl font-bold">Binary Assigner</h1></Link>
+          <h1 className="text-2xl font-bold">Binary Assigner</h1>
         </header>
         <div className="flex flex-col items-center py-4 space-y-4">
           <Link href="/view">Want to view generated files? Click me!</Link>
@@ -187,27 +197,54 @@ export default function Home() {
           />
         </div>
         <hr className="border-t border-gray-300" />
-        <div className="flex-grow flex justify-center items-center py-4">
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))`,
-              gap: "0.5rem",
-            }}
-          >
-            {Array.from({ length: rows * cols }).map((_, index) => (
-              <div
-                key={index}
-                onClick={() => handleCircleClick(index)}
-                className={`w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 lg:w-10 lg:h-10 xl:w-12 xl:h-12 rounded-full flex justify-center items-center cursor-pointer
-                  ${circleStates[index] === "green" ? "bg-green-500" : circleStates[index] === "blue" ? "bg-blue-500" : "bg-red-500"}
-                  ${selectedIndex === index ? "border-4 border-blue-500" : ""}`}
-              >
-                <span className="text-white text-xs sm:text-sm md:text-base lg:text-sm xl:text-base">
-                  {index + 1}
-                </span>
+        <div className="flex justify-center items-center">
+          <div className="flex flex-col">
+            <div className="flex space-x-2 justify-center">
+              <div className="w-6" />
+              {getColumnLabels().map((label) => (
+                <div
+                  key={label}
+                  className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 lg:w-10 lg:h-10 xl:w-12 xl:h-12 flex justify-center items-center"
+                >
+                  {label}
+                </div>
+              ))}
+            </div>
+            <div className="flex">
+              <div className="flex flex-col space-y-2">
+                {getRowLabels().map((label) => (
+                  <div
+                    key={label}
+                    className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 lg:w-10 lg:h-10 xl:w-12 xl:h-12 flex justify-center items-center"
+                  >
+                    {label}
+                  </div>
+                ))}
               </div>
-            ))}
+              <div className="flex-grow flex justify-center items-center py-4">
+                <div
+                  style={{
+                    display: "grid",
+                    gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))`,
+                    gap: "0.5rem",
+                  }}
+                >
+                  {Array.from({ length: rows * cols }).map((_, index) => (
+                    <div
+                      key={index}
+                      onClick={() => handleCircleClick(index)}
+                      className={`w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 lg:w-10 lg:h-10 xl:w-12 xl:h-12 rounded-full flex justify-center items-center cursor-pointer
+                        ${circleStates[index] === "green" ? "bg-green-500" : circleStates[index] === "blue" ? "bg-blue-500" : "bg-red-500"}
+                        ${selectedIndex === index ? "border-4 border-blue-500" : ""}`}
+                    >
+                      <span className="text-white text-xs sm:text-sm md:text-base lg:text-sm xl:text-base">
+                        {index + 1}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </main>
