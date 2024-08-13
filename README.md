@@ -1,7 +1,4 @@
 # Binary Assigner
-
-Watch the tutorial / demo of this website [here](https://youtu.be/iQprJXyiMOo).
-
 This project provides a simple web interface to control the states of individual wells on a well plate. The user can toggle the state of each well between two states. This is mainly designed to be used with a wireless presenter or a keyboard. The well plate is typically used in laboratory settings, and this interface helps record the state of wells in a user-friendly manner, especially when the user is using a microscope and cannot see the data on the screen.  
 
 https://binary-assigner.vercel.app/
