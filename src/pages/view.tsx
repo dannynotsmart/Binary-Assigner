@@ -35,6 +35,12 @@ export default function View() {
     .map((value, index) => (value === 2 && !showBlue ? index + 1 : null))
     .filter((index) => index !== null) as number[];
 
+  const getCoordinate = (index: number) => {
+    const row = String.fromCharCode("A".charCodeAt(0) + Math.floor(index / (data?.cols || 1)));
+    const col = (index % (data?.cols || 1)) + 1;
+    return `${row}${col}`;
+  };
+
   const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
   const rowLabels = data ? Array.from({ length: data.rows }, (_, i) => alphabet[i % 26]) : [];
   const colLabels = data ? Array.from({ length: data.cols }, (_, i) => i + 1) : [];
@@ -108,7 +114,7 @@ export default function View() {
                               ${value === 1 ? "bg-green-500" : value === 2 ? (showBlue ? "bg-blue-500" : "hidden") : "bg-red-500"}`}
                           >
                             <span className="text-white text-xs sm:text-sm md:text-base lg:text-sm xl:text-base">
-                              {index + 1}
+                              {getCoordinate(index)}
                             </span>
                           </div>
                         ))}

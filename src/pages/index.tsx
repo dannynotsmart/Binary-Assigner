@@ -11,7 +11,6 @@ export default function Home() {
   const [notes, setNotes] = useState("");
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [circleStates, setCircleStates] = useState<string[]>(Array(8 * 12).fill("red"));
-  const [bPressTimeout, setBPressTimeout] = useState<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     const totalCircles = rows * cols;
@@ -52,7 +51,7 @@ export default function Home() {
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [selectedIndex, rows, cols, bPressTimeout]);
+  }, [selectedIndex, rows, cols]);
 
   const handleCircleClick = (index: number) => {
     setSelectedIndex(index);
@@ -127,6 +126,12 @@ export default function Home() {
     return Array.from({ length: rows }, (_, i) =>
       String.fromCharCode("A".charCodeAt(0) + i)
     );
+  };
+
+  const getCoordinate = (index: number) => {
+    const row = String.fromCharCode("A".charCodeAt(0) + Math.floor(index / cols));
+    const col = (index % cols) + 1;
+    return `${row}${col}`;
   };
 
   return (
@@ -225,7 +230,7 @@ export default function Home() {
                         ${selectedIndex === index ? "border-4 border-blue-500" : ""}`}
                     >
                       <span className="text-white text-xs sm:text-sm md:text-base lg:text-sm xl:text-base">
-                        {index + 1}
+                        {getCoordinate(index)}
                       </span>
                     </div>
                   ))}
