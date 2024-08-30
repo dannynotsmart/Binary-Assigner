@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Inter } from "next/font/google";
 import Head from "next/head";
 import Link from "next/link";
@@ -11,6 +11,7 @@ export default function Home() {
   const [notes, setNotes] = useState("");
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [circleStates, setCircleStates] = useState<string[]>(Array(8 * 12).fill("red"));
+  const forward = useRef(true);
 
   useEffect(() => {
     const totalCircles = rows * cols;
@@ -43,7 +44,27 @@ export default function Home() {
           newStates[selectedIndex] = newStates[selectedIndex] === "red" ? "green" : "red";
           return newStates;
         });
-        setSelectedIndex((prev) => Math.min(prev + 1, totalCircles - 1));
+        if(((selectedIndex + 1) % 12 == 0 && forward.current) && selectedIndex !== 0){
+          forward.current = false;
+          changed = true;
+          setSelectedIndex((prev) => Math.min(prev + 12, totalCircles - 1));
+        }
+
+        if(selectedIndex % 12 == 0 && !(forward.current)){
+          forward.current = true;
+          changed = true;
+          setSelectedIndex((prev) => Math.min(prev + 12, totalCircles - 1));
+        }
+
+        if(forward.current && !changed){
+          setSelectedIndex((prev) => Math.min(prev + 1, totalCircles - 1));
+          changed = false;
+        }
+
+        if(!forward.current && !changed){
+          setSelectedIndex((prev) => Math.min(prev - 1, totalCircles - 1));
+          changed = false;
+        }
       }
     };
 
