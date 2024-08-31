@@ -33,6 +33,9 @@ export default function Home() {
      const totalCircles = rows * cols;
      let changed: boolean = false;
      if (e.key === "PageDown" || e.key === "ArrowRight") {
+       const coordinate = getCoordinate(selectedIndex);
+       const utterance = new SpeechSynthesisUtterance(`${coordinate}`);
+       window.speechSynthesis.speak(utterance);
        if(((selectedIndex + 1) % 12 == 0 && forward.current) && selectedIndex !== 0){
          forward.current = false;
          changed = true;
@@ -57,8 +60,11 @@ export default function Home() {
          setSelectedIndex((prev) => Math.min(prev - 1, totalCircles - 1));
          changed = false;
        }
-     } else if (e.key === "ArrowLeft") {
-       if((selectedIndex % 12 == 0 && forward.current) && selectedIndex !== 0){
+     }else if (e.key === "ArrowLeft") {
+        const coordinate = getCoordinate(selectedIndex);
+        const utterance = new SpeechSynthesisUtterance(`${coordinate}`);
+        window.speechSynthesis.speak(utterance);
+        if((selectedIndex % 12 == 0 && forward.current) && selectedIndex !== 0){
          forward.current = false;
          changed = true;
          setSelectedIndex((prev) => Math.max(0, Math.min(prev - 12, totalCircles - 1)));
@@ -88,6 +94,11 @@ export default function Home() {
          newStates[selectedIndex] = "blue";
          return newStates;
        });
+
+       const coordinate = getCoordinate(selectedIndex);
+       const utterance = new SpeechSynthesisUtterance(`${coordinate}`);
+       window.speechSynthesis.speak(utterance);
+
        if(((selectedIndex + 1) % 12 == 0 && forward.current) && selectedIndex !== 0){
         forward.current = false;
         changed = true;
@@ -121,7 +132,7 @@ export default function Home() {
 
 
        const coordinate = getCoordinate(selectedIndex);
-       const utterance = new SpeechSynthesisUtterance(`Coordinate ${coordinate} changed`);
+       const utterance = new SpeechSynthesisUtterance(`${coordinate}`);
        window.speechSynthesis.speak(utterance);
 
 
