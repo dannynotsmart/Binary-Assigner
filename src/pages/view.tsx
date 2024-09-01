@@ -56,6 +56,32 @@ export default function View() {
     <>
       <Head>
         <title>View Binary Assigner</title>
+        <style>
+          {`
+            @media print {
+              body {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+              }
+
+              .bg-green-500 {
+                background-color: #10B981 !important;
+              }
+
+              .bg-blue-500 {
+                background-color: #3B82F6 !important;
+              }
+
+              .bg-red-500 {
+                background-color: #EF4444 !important;
+              }
+
+              .hidden {
+                display: none !important;
+              }
+            }
+          `}
+        </style>
       </Head>
       <main className={`${inter.className} flex flex-col min-h-screen bg-gray-100`}>
         <header className="bg-white shadow-md py-4 px-8 text-center">
