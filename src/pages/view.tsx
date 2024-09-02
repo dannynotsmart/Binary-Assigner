@@ -5,50 +5,83 @@ import Link from "next/link";
 
 const inter = Inter({ subsets: ["latin"] });
 
+type GridData = {
+  id: number;
+  rows: number;
+  cols: number;
+  notes: string;
+  values: number[];
+};
+
 export default function View() {
-  const [data, setData] = useState<{
-    rows: number;
-    cols: number;
-    notes: string;
-    values: number[];
-  } | null>(null);
+  const [dataList, setDataList] = useState<GridData[]>([]);
   const [showBlue, setShowBlue] = useState(true);
 
   const handleImport = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
+    const files = event.target.files;
+    if (!files) return;
 
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      if (!e.target?.result) return;
-      try {
-        const jsonData = JSON.parse(e.target.result as string);
-        setData(jsonData);
-      } catch (err) {
-        alert("Failed to parse JSON file.");
-      }
-    };
-    reader.readAsText(file);
+    const readers = Array.from(files).map((file, index) => {
+      return new Promise<void>((resolve) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          if (!e.target?.result) return;
+          try {
+            const jsonData = JSON.parse(e.target.result as string);
+            setDataList((prevData) => [
+              ...prevData,
+              { ...jsonData, id: prevData.length + index },
+            ]);
+            resolve();
+          } catch (err) {
+            alert("Failed to parse JSON file.");
+          }
+        };
+        reader.readAsText(file);
+      });
+    });
+
+    await Promise.all(readers);
   };
 
-  const hiddenCells = data?.values
-    .map((value, index) => (value === 2 && !showBlue ? index + 1 : null))
-    .filter((index) => index !== null) as number[];
-
-  const getCoordinate = (index: number) => {
-    const row = String.fromCharCode("A".charCodeAt(0) + Math.floor(index / (data?.cols || 1)));
-    const col = (index % (data?.cols || 1)) + 1;
+  const getCoordinate = (index: number, cols: number) => {
+    const row = String.fromCharCode("A".charCodeAt(0) + Math.floor(index / cols));
+    const col = (index % cols) + 1;
     return `${row}${col}`;
   };
 
   const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-  const rowLabels = data ? Array.from({ length: data.rows }, (_, i) => alphabet[i % 26]) : [];
-  const colLabels = data ? Array.from({ length: data.cols }, (_, i) => i + 1) : [];
 
   return (
     <>
       <Head>
         <title>View Binary Assigner</title>
+        <style>
+          {`
+            @media print {
+              body {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+              }
+
+              .bg-green-500 {
+                background-color: #10B981 !important;
+              }
+
+              .bg-blue-500 {
+                background-color: #3B82F6 !important;
+              }
+
+              .bg-red-500 {
+                background-color: #EF4444 !important;
+              }
+
+              .hidden {
+                display: none !important;
+              }
+            }
+          `}
+        </style>
       </Head>
       <main className={`${inter.className} flex flex-col min-h-screen bg-gray-100`}>
         <header className="bg-white shadow-md py-4 px-8 text-center">
@@ -59,12 +92,20 @@ export default function View() {
           <input
             type="file"
             accept=".json"
+            multiple
             onChange={handleImport}
             className="border p-2 rounded"
           />
-          {data && (
-            <>
-              <div className="flex flex-col items-center py-4 space-y-4">
+          {dataList.map((data) => {
+            const hiddenCells = data.values
+              .map((value, index) => (value === 2 && !showBlue ? index + 1 : null))
+              .filter((index) => index !== null) as number[];
+
+            const rowLabels = Array.from({ length: data.rows }, (_, i) => alphabet[i % 26]);
+            const colLabels = Array.from({ length: data.cols }, (_, i) => i + 1);
+
+            return (
+              <div key={data.id} className="flex flex-col items-center py-4 space-y-4 border rounded-lg p-4 bg-white shadow-lg">
                 <label className="flex items-center space-x-2">
                   <input
                     type="checkbox"
@@ -114,7 +155,7 @@ export default function View() {
                               ${value === 1 ? "bg-green-500" : value === 2 ? (showBlue ? "bg-blue-500" : "hidden") : "bg-red-500"}`}
                           >
                             <span className="text-white text-xs sm:text-sm md:text-base lg:text-sm xl:text-base">
-                              {getCoordinate(index)}
+                              {getCoordinate(index, data.cols)}
                             </span>
                           </div>
                         ))}
@@ -138,8 +179,8 @@ export default function View() {
                   </div>
                 )}
               </div>
-            </>
-          )}
+            );
+          })}
         </div>
       </main>
     </>
