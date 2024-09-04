@@ -15,7 +15,7 @@ type GridData = {
 
 export default function View() {
   const [dataList, setDataList] = useState<GridData[]>([]);
-  const [showBlue, setShowBlue] = useState(true);
+  const [showyellow, setShowyellow] = useState(true);
 
   const handleImport = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
@@ -68,8 +68,8 @@ export default function View() {
                 background-color: #10B981 !important;
               }
 
-              .bg-blue-500 {
-                background-color: #3B82F6 !important;
+              .bg-yellow-500 {
+                background-color: #ECC94B !important;
               }
 
               .bg-red-500 {
@@ -97,8 +97,11 @@ export default function View() {
             className="border p-2 rounded"
           />
           {dataList.map((data) => {
+            const yellowCount = data.values.filter((value) => value === 2).length;
+            const greenCount = data.values.filter((value) => value === 1).length;
+
             const hiddenCells = data.values
-              .map((value, index) => (value === 2 && !showBlue ? index + 1 : null))
+              .map((value, index) => (value === 2 && !showyellow ? index + 1 : null))
               .filter((index) => index !== null) as number[];
 
             const rowLabels = Array.from({ length: data.rows }, (_, i) => alphabet[i % 26]);
@@ -109,11 +112,11 @@ export default function View() {
                 <label className="flex items-center space-x-2">
                   <input
                     type="checkbox"
-                    checked={showBlue}
-                    onChange={(e) => setShowBlue(e.target.checked)}
+                    checked={showyellow}
+                    onChange={(e) => setShowyellow(e.target.checked)}
                     className="form-checkbox"
                   />
-                  <span>Show blue circles</span>
+                  <span>Show yellow circles</span>
                 </label>
                 <div className="flex-grow flex justify-center items-center py-4">
                   <div className="flex flex-col space-y-2">
@@ -152,7 +155,7 @@ export default function View() {
                           <div
                             key={index}
                             className={`w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 lg:w-10 lg:h-10 xl:w-12 xl:h-12 rounded-full flex justify-center items-center
-                              ${value === 1 ? "bg-green-500" : value === 2 ? (showBlue ? "bg-blue-500" : "hidden") : "bg-red-500"}`}
+                              ${value === 1 ? "bg-green-500" : value === 2 ? (showyellow ? "bg-yellow-500" : "hidden") : "bg-red-500"}`}
                           >
                             <span className="text-white text-xs sm:text-sm md:text-base lg:text-sm xl:text-base">
                               {getCoordinate(index, data.cols)}
@@ -168,9 +171,13 @@ export default function View() {
                   <p><strong>Columns:</strong> {data.cols}</p>
                   <p><strong>Notes:</strong> {data.notes}</p>
                 </div>
-                {!showBlue && hiddenCells.length > 0 && (
+                <div className="text-center mt-4">
+                  <p><strong>Green Circles:</strong> {greenCount}</p>
+                  <p><strong>Yellow Circles:</strong> {yellowCount}</p>
+                </div>
+                {!showyellow && hiddenCells.length > 0 && (
                   <div className="mt-4">
-                    <h2 className="text-lg font-semibold">Hidden Blue Circles:</h2>
+                    <h2 className="text-lg font-semibold">Hidden yellow Circles:</h2>
                     <ul className="list-disc list-inside mt-2">
                       {hiddenCells.map((index) => (
                         <li key={index}>Circle {index}</li>

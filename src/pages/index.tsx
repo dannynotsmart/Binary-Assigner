@@ -14,6 +14,8 @@ export default function Home() {
  const [selectedIndex, setSelectedIndex] = useState(0);
  const [circleStates, setCircleStates] = useState<string[]>(Array(8 * 12).fill("red"));
  const forward = useRef(true);
+ const numGreen = useRef(0);
+ const numYellow = useRef(0);
 
 
  useEffect(() => {
@@ -36,17 +38,17 @@ export default function Home() {
        const coordinate = getCoordinate(selectedIndex);
        const utterance = new SpeechSynthesisUtterance(`${coordinate}`);
        window.speechSynthesis.speak(utterance);
-       if(((selectedIndex + 1) % 12 == 0 && forward.current) && selectedIndex !== 0){
+       if(((selectedIndex + 1) % cols == 0 && forward.current) && selectedIndex !== 0){
          forward.current = false;
          changed = true;
-         setSelectedIndex((prev) => Math.min(prev + 12, totalCircles - 1));
+         setSelectedIndex((prev) => Math.min(prev + cols, totalCircles - 1));
        }
 
 
-       if(selectedIndex % 12 == 0 && !(forward.current)){
+       if(selectedIndex % cols == 0 && !(forward.current)){
          forward.current = true;
          changed = true;
-         setSelectedIndex((prev) => Math.min(prev + 12, totalCircles - 1));
+         setSelectedIndex((prev) => Math.min(prev + cols, totalCircles - 1));
        }
 
 
@@ -64,17 +66,17 @@ export default function Home() {
         const coordinate = getCoordinate(selectedIndex);
         const utterance = new SpeechSynthesisUtterance(`${coordinate}`);
         window.speechSynthesis.speak(utterance);
-        if((selectedIndex % 12 == 0 && forward.current) && selectedIndex !== 0){
+        if((selectedIndex % cols == 0 && forward.current) && selectedIndex !== 0){
          forward.current = false;
          changed = true;
-         setSelectedIndex((prev) => Math.max(0, Math.min(prev - 12, totalCircles - 1)));
+         setSelectedIndex((prev) => Math.max(0, Math.min(prev - cols, totalCircles - 1)));
        }
 
 
-       if((selectedIndex + 1) % 12 == 0 && !(forward.current)){
+       if((selectedIndex + 1) % cols == 0 && !(forward.current)){
          forward.current = true;
          changed = true;
-         setSelectedIndex((prev) => Math.max(0, Math.min(prev - 12, totalCircles - 1)));
+         setSelectedIndex((prev) => Math.max(0, Math.min(prev - cols, totalCircles - 1)));
        }
 
 
@@ -89,27 +91,41 @@ export default function Home() {
          changed = false;
        }
      } else if (e.key === "b" || e.key === "B") {
-       setCircleStates((prev) => {
-         const newStates = [...prev];
-         newStates[selectedIndex] = "blue";
-         return newStates;
-       });
+
+      setCircleStates((prev) => {
+        const newStates = [...prev];
+        if (newStates[selectedIndex] === "yellow") {
+           newStates[selectedIndex] = "red";
+       } else {
+           newStates[selectedIndex] = "yellow";
+       }
+        return newStates;
+      });
+
+       if (circleStates[selectedIndex] === "yellow"){
+        numYellow.current = numYellow.current - 1;
+       } else if (circleStates[selectedIndex] === "green"){
+        numGreen.current = numGreen.current - 1;
+        numYellow.current = numYellow.current + 1;
+       } else {
+        numYellow.current = numYellow.current + 1;
+       }
 
        const coordinate = getCoordinate(selectedIndex);
        const utterance = new SpeechSynthesisUtterance(`${coordinate}`);
        window.speechSynthesis.speak(utterance);
 
-       if(((selectedIndex + 1) % 12 == 0 && forward.current) && selectedIndex !== 0){
+       if(((selectedIndex + 1) % cols == 0 && forward.current) && selectedIndex !== 0){
         forward.current = false;
         changed = true;
-        setSelectedIndex((prev) => Math.min(prev + 12, totalCircles - 1));
+        setSelectedIndex((prev) => Math.min(prev + cols, totalCircles - 1));
       }
 
 
-      if(selectedIndex % 12 == 0 && !(forward.current)){
+      if(selectedIndex % cols == 0 && !(forward.current)){
         forward.current = true;
         changed = true;
-        setSelectedIndex((prev) => Math.min(prev + 12, totalCircles - 1));
+        setSelectedIndex((prev) => Math.min(prev + cols, totalCircles - 1));
       }
 
 
@@ -126,27 +142,40 @@ export default function Home() {
      } else if (e.key === "PageUp" || e.key === "n" || e.key === "N") {
        setCircleStates((prev) => {
          const newStates = [...prev];
-         newStates[selectedIndex] = newStates[selectedIndex] === "red" ? "green" : "red";
+         if (newStates[selectedIndex] === "green") {
+            newStates[selectedIndex] = "red";
+        } else {
+            newStates[selectedIndex] = "green";
+        }
          return newStates;
        });
-
+       
+       
 
        const coordinate = getCoordinate(selectedIndex);
        const utterance = new SpeechSynthesisUtterance(`${coordinate}`);
        window.speechSynthesis.speak(utterance);
+       
+       if (circleStates[selectedIndex] === "green"){
+        numGreen.current = numGreen.current - 1;
+       } else if (circleStates[selectedIndex] === "yellow"){
+        numYellow.current = numYellow.current - 1;
+        numGreen.current = numGreen.current + 1;
+       } else {
+        numGreen.current = numGreen.current + 1;
+       }
 
-
-       if(((selectedIndex + 1) % 12 == 0 && forward.current) && selectedIndex !== 0){
+       if(((selectedIndex + 1) % cols == 0 && forward.current) && selectedIndex !== 0){
          forward.current = false;
          changed = true;
-         setSelectedIndex((prev) => Math.min(prev + 12, totalCircles - 1));
+         setSelectedIndex((prev) => Math.min(prev + cols, totalCircles - 1));
        }
 
 
-       if(selectedIndex % 12 == 0 && !(forward.current)){
+       if(selectedIndex % cols == 0 && !(forward.current)){
          forward.current = true;
          changed = true;
-         setSelectedIndex((prev) => Math.min(prev + 12, totalCircles - 1));
+         setSelectedIndex((prev) => Math.min(prev + cols, totalCircles - 1));
        }
 
 
@@ -179,7 +208,7 @@ export default function Home() {
  const handleExport = () => {
    const values = circleStates.map((state) => {
      if (state === "green") return 1;
-     if (state === "blue") return 2;
+     if (state === "yellow") return 2;
      return 0;
    });
    const data = {
@@ -220,7 +249,7 @@ export default function Home() {
          setNotes(data.notes || "");
          setCircleStates(data.values.map((v: number) => {
            if (v === 1) return "green";
-           if (v === 2) return "blue";
+           if (v === 2) return "yellow";
            return "red";
          }));
        }
@@ -306,7 +335,7 @@ export default function Home() {
          </label>
          <button
            onClick={handleExport}
-           className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+           className="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600"
          >
            Export
          </button>
@@ -355,8 +384,8 @@ export default function Home() {
                      key={index}
                      onClick={() => handleCircleClick(index)}
                      className={`w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 lg:w-10 lg:h-10 xl:w-12 xl:h-12 rounded-full flex justify-center items-center cursor-pointer
-                       ${circleStates[index] === "green" ? "bg-green-500" : circleStates[index] === "blue" ? "bg-blue-500" : "bg-red-500"}
-                       ${selectedIndex === index ? "border-4 border-blue-500" : ""}`}
+                       ${circleStates[index] === "green" ? "bg-green-500" : circleStates[index] === "yellow" ? "bg-yellow-500" : "bg-red-500"}
+                       ${selectedIndex === index ? "border-4 border-yellow-500" : ""}`}
                    >
                      <span className="text-white text-xs sm:text-sm md:text-base lg:text-sm xl:text-base">
                        {getCoordinate(index)}
@@ -366,6 +395,8 @@ export default function Home() {
                </div>
              </div>
            </div>
+           <div>Number of green states: {numGreen.current}</div>
+           <div>Number of yellow states: {numYellow.current}</div>
          </div>
        </div>
      </main>
